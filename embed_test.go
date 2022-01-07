@@ -1,4 +1,4 @@
-package go_embed
+package main_test
 
 import (
 	"embed"
@@ -71,5 +71,34 @@ func TestMultipleFiles(t *testing.T) {
 
 	if err != nil {
 		panic(err)
+	}
+}
+
+/**
+Path Macther
+- Selain manual satu persat, kita bisa menggunakan path macther untuk membaca multiple file yang kita inginkan
+- Ini sangat cocok ketika misal kita punya pola jenis file yang kita inginkan untuk kita baca
+- Caranya, kita perlu menggunakan path matcher seperti pada package function path.Match
+https://pkg.go.dev/path#Match
+*/
+
+//go:embed files/*.txt
+var path embed.FS
+
+func TestPathMatc(t *testing.T) {
+	dir, err := path.ReadDir("files")
+	if err != nil {
+		panic(err)
+	}
+
+	for _, entry := range dir {
+		if !entry.IsDir() {
+			fmt.Println(entry.Name())
+			content, err := path.ReadFile("files/" + entry.Name())
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(string(content))
+		}
 	}
 }
